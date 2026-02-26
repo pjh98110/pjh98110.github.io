@@ -1,0 +1,56 @@
+name: Deploy MkDocs site to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]  # 기본 브랜치가 master면 "master"로 변경
+  workflow_dispatch: {}   # Actions 탭에서 수동 실행 버튼
+
+# GitHub Pages 공식 배포에 필요한 권한
+permissions:
+  contents: read
+  pages: write
+  id-token: write   # OIDC 토큰(배포 요청 검증용) :contentReference[oaicite:4]{index=4}
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # ✅ 로컬과 CI 버전을 맞추려면 requirements.txt 사용 권장
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install "mkdocs<2" mkdocs-material; fi
+
+      - name: Build site
+        run: |
+          mkdocs build --clean
+
+      # GitHub Pages에 올릴 산출물(site/)을 업로드
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

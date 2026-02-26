@@ -1,0 +1,40 @@
+site_name: "Data Scientist & Data Analyst Park Jonghyeon Portfolio"
+site_url: "https://pjh98110.github.io"
+repo_url: "https://github.com/pjh98110/pjh98110.github.io"
+repo_name: "GitHub"
+
+theme:
+  name: material
+  language: ko
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - Profile:
+      - About Me: profile.md
+  - Projects:
+      - Projects Overview: projects/index.md
+      - Project 01: projects/project-01.md
+  - Skills: skills.md
+  - Career:
+      - Education: education.md
+      - Certificates: certificates.md
+      - Awards: awards.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
